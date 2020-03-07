@@ -17,9 +17,9 @@ def output_layer_activation_derivative(x):
 class NeuralNet():
         
         def __init__(self, X_train, y_train, hidden_layer, lr, epochs):
-                self.W1 = np.ones((hidden_layer, X_train.shape[1]))
-                self.W2 = np.ones((1, hidden_layer))
-                self.b = np.zeros((hidden_layer, 1))
+                self.W1 = np.random.randint(10, size = (hidden_layer, X_train.shape[1]))
+                self.W2 = np.ones(hidden_layer)
+                self.b = np.zeros(hidden_layer)
                 self.learning_rate = lr
                 self.epochs = epochs
                 self.training_points = X_train
@@ -29,27 +29,30 @@ class NeuralNet():
                 f1 = np.vectorize(relu)
                 df1 = np.vectorize(drelu)
                 
+                # Forward propagation
                 z1 = self.W1 @ X + self.b
                 a1 = f1(z1)
                 z2 = self.W2 @ a1
-                activated_output = output_layer_activation(z2)
+                output = output_layer_activation(z2)
                 
-                output_layer_error = (activated_output - y) * output_layer_activation_derivative(z2)
+                # Backpropagation
+                output_layer_error = (output - y) * output_layer_activation_derivative(z2)
+                hidden_layer_error = np.multiply(self.W2 * output_layer_error, df1(z1))
                 
-                hidden_layer_error = np.multiply((self.W2).T @ output_layer_error, df1(z1))
-                
+                # Gradients
                 b_grad = hidden_layer_error
                 W2_grad = (a1 * output_layer_error).T
-                W1_grad = (X * hidden_layer_error.T).T
+                W1_grad = np.outer(hidden_layer_error, X)
                 
+                # Update the parameters
                 self.b = self.b - self.learning_rate * b_grad
                 self.W1 = self.W1 - self.learning_rate * W1_grad
                 self.W2 = self.W2 - self.learning_rate * W2_grad
                 
-        def predict(self, X_test):
+        def predict(self, X):
                 f1 = np.vectorize(relu)
                 
-                z1 = self.W1 @ X_test + self.b
+                z1 = self.W1 @ X + self.b
                 a1 = f1(z1)
                 z2 = self.W2 @ a1
                 activated_output = output_layer_activation(z2)

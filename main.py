@@ -18,10 +18,10 @@ knn.fit(X_train, y_train)
 y_pred = knn.predict(X_test)
 
 # Run Neural Network
-x = IRN.NeuralNet(X_train, y_train, hidden_layer = 10, lr = 0.001, epochs = 5)
+x = IRN.NeuralNet(X_train, y_train, hidden_layer = 100, lr = 0.001, epochs = 300)
 x.train_neural_network()
-x.test_neural_network(X_test, y_test)
+nn_score = x.test_neural_network(X_test, y_test)
 
 # Compare errors
 print("kNN test score: {:.4f}".format(np.mean(y_pred == y_test)))
-print("Neural Network test score:")
+print("Neural Network test score: {:.4f}".format(nn_score))
