@@ -1,5 +1,6 @@
 import numpy as np
 import irisneuralnet as IRN
+import nnpytorch
 
 # Download the dataset
 from sklearn.datasets import load_iris
@@ -17,10 +18,13 @@ knn.fit(X_train, y_train)
 
 y_pred = knn.predict(X_test)
 
-# Run Neural Network
-x = IRN.NeuralNet(X_train, y_train, hidden_layer = 100, lr = 0.001, epochs = 300)
+# Run Handcrafted Neural Network
+x = IRN.NeuralNet(X_train, y_train, hidden_layer = 200, lr = 0.001, epochs = 100)
 x.train_neural_network()
 nn_score = x.test_neural_network(X_test, y_test)
+
+# Run Neural Network with PyTorch
+nnpytorch.train_model()
 
 # Compare errors
 print("kNN test score: {:.4f}".format(np.mean(y_pred == y_test)))

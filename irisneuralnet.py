@@ -1,5 +1,4 @@
 # Neural Network
-
 import numpy as np
 
 def relu(x):
