@@ -1,37 +1,43 @@
+import numpy as np
+import torch
+# import torch.autograd as autograd
 import torch.nn as nn
+import torch.nn.functional as F
 
 # Specify the model
 
-model = nn.Sequential(
-        nn.Linear(X_train.shape[1], hidden_layer),
-        nn.LeakyReLU(negative_slope = 0.01),
-        nn.Linear(hidden_layer, 3)
-        )
+criterion = nn.NLLLoss()
 
-def train_model(train_data, dev_data, model, lr, momentum, nesterov = False, n_epochs):
+def train_model(data, model, lr = 0.01, momentum = 0.9, nesterov = False, n_epochs = 30):
         """
         Train a model for N epochs.
         """
         optimizer = torch.optim.SGD(model.parameters(), lr, momentum, nesterov)
         
-        for epoch in range(1,11):
-                print("----------\nEpoch {}:\n".format(epoch))
+        for epoch in range(n_epochs):
+                        
+                # print("----------\nEpoch {}:\n".format(epoch))
                 
-                loss, acc = run_epoch(train_data, model.train(), optimizer)
-                print('Train loss: {:.6f} | Train accuracy: {:.6f}'.format(loss, acc))
-                
-                val_loss, val_acc = run_epoch(dev_data, model.eval(), optimizer)
-                print('Validation loss: {:.6f} | Validation accuracy: {:.6f}'.format(val_loss, val_acc))
-        return val_acc
+                loss, acc = run_epoch(data, model.train(), optimizer)
+                # print('Train loss: {:.6f} | Train accuracy: {:.6f}'.format(loss, acc))
 
 def run_epoch(data, model, optimizer):
-        losses = []
-        accuracy = []
         
         is_training = model.training
+        
+        x, y = data['x'], data['y']
+        output = model(x)
+        
+        # Predict and calculate accuracy
+        predictions = torch.argmax(output, dim = 1)
+        accuracy = np.mean(np.equal(predictions.numpy(), y.numpy()))
+        
+        # Compute loss
+        loss = F.cross_entropy(output, y)
         
         if is_training:
                 optimizer.zero_grad()
                 loss.backward()
                 optimizer.step()
-        return avg_loss, avg_accuracy
+        
+        return loss.data.item(), accuracy

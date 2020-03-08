@@ -17,7 +17,7 @@ class NeuralNet():
         
         def __init__(self, X_train, y_train, hidden_layer, lr, epochs):
                 self.W1 = np.random.randint(10, size = (hidden_layer, X_train.shape[1]))
-                self.W2 = np.ones(hidden_layer)
+                self.W2 = np.ones((hidden_layer, 3))
                 self.b = np.zeros(hidden_layer)
                 self.learning_rate = lr
                 self.epochs = epochs
