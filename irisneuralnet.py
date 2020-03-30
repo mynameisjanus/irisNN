@@ -31,7 +31,7 @@ class NeuralNet():
                 # Forward propagation
                 z1 = self.W1 @ X + self.b
                 a1 = f1(z1)
-                z2 = self.W2 @ a1
+                z2 = a1 @ self.W2
                 output = output_layer_activation(z2)
                 
                 # Backpropagation
